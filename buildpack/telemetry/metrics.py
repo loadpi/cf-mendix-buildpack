@@ -249,8 +249,11 @@ class MetricsServerEmitter(MetricsEmitter):
         self.fallback_emitter = LoggingEmitter()
 
     def emit(self, stats):
+        cert_path = os.getenv("CF_SYSTEM_CERT_PATH")
         try:
-            response = requests.post(self.metrics_url, json=stats, timeout=10)
+            response = requests.post(
+                self.metrics_url, json=stats, timeout=10, verify=False
+            )
         except Exception:
             logging.debug(
                 "Failed to send metrics to trends server.", exc_info=True
